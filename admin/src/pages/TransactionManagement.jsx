@@ -78,7 +78,7 @@ const TransactionManagement = () => {
       title: "Amount (VNĐ)",
       dataIndex: "amount",
       key: "amount",
-      render: (amount) => amount.toLocaleString("vi-VN"),
+      render: (amount) => amount.toLocaleString("vi-VN") + " VND",
     },
     {
       title: "Credits",

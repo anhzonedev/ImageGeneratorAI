@@ -78,22 +78,14 @@ const Login = () => {
   const [passwordVisible, setPasswordVisible] = React.useState(false);
   return (
     <div className="absolute top-0 left-0 bottom-0 right-0 z-10 backdrop-blur-sm bg-black/30 flex justify-center items-center">
-      <Form
-        onFinish={onFinish}
-        className="relative bg-white !p-10 rounded-xl text-slate-500"
-        name="login"
-        initialValues={{
-          remember: true,
-        }}
-        style={{
-          maxWidth: 500,
-        }}
-      >
+      <Form onFinish={onFinish} className="relative bg-white !p-10 rounded-xl text-slate-500">
         <h1 className="text-center text-2xl text-neutral-700 font-medium">
-          {state === "Login" ? "Đăng nhập" : state}
+          {state === "Login" ? "Đăng nhập" : "Đăng ký"}
         </h1>
         <p className="text-sm mb-10">
-          Chào mừng trở lại! Vui lòng đăng nhập để tiếp tục
+          {state === "Login"
+            ? "Chào mừng trở lại! Vui lòng đăng nhập để tiếp tục"
+            : "Tạo tài khoản mới"}
         </p>
         {state !== "Login" && (
           <Form.Item
@@ -153,21 +145,21 @@ const Login = () => {
         <Form.Item>
           <Flex justify="space-between" align="center">
             <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Remember me</Checkbox>
+              <Checkbox>Ghi nhớ đăng nhập</Checkbox>
             </Form.Item>
-            <a href="">Forgot password</a>
+            <a href="">Quên mật khẩu?</a>
           </Flex>
         </Form.Item>
 
         <Form.Item>
-          <Button className="!mb-3" block type="primary" htmlType="submit">
+          <Button block type="primary" htmlType="submit">
             {state === "Login" ? "Đăng nhập" : "Đăng ký"}
           </Button>
           Hoặc{" "}
           {state === "Login" ? (
             <a onClick={() => setState("Signup")}>Đăng ký ngay!</a>
           ) : (
-            <a onClick={() => setState("Login")}>Đăng nhập!</a>
+            <a onClick={() => setState("Login")}>Đăng nhập</a>
           )}
         </Form.Item>
         <img

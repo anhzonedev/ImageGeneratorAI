@@ -55,10 +55,16 @@ const PlanManagement = () => {
 
   const handleSubmit = async (values) => {
     try {
+      // Ensure features is an array
+      const formattedValues = {
+        ...values,
+        features: values.features ? values.features.split('\n').filter(f => f.trim()) : []
+      };
+
       if (editingPlan) {
         const { data } = await axios.put(
           `${backendUrl}/api/admin/plans/${editingPlan._id}`,
-          values,
+          formattedValues,
           { headers: { token } }
         );
         if (data.success) {
@@ -67,7 +73,7 @@ const PlanManagement = () => {
       } else {
         const { data } = await axios.post(
           `${backendUrl}/api/admin/plans`,
-          values,
+          formattedValues,
           { headers: { token } }
         );
         if (data.success) {

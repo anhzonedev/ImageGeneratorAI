@@ -4,25 +4,21 @@ const planSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    unique: true,
   },
   price: {
     type: Number,
     required: true,
+    min: 0,
   },
   credits: {
     type: Number,
     required: true,
+    min: 0,
   },
   description: {
     type: String,
     default: "",
-  },
-  isPromotion: {
-    type: Boolean,
-    default: false,
-  },
-  promotionEndDate: {
-    type: Date,
   },
   isActive: {
     type: Boolean,
@@ -33,10 +29,6 @@ const planSchema = new mongoose.Schema({
       type: String,
     },
   ],
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
   updatedAt: {
     type: Date,
     default: Date.now,

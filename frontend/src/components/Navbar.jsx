@@ -23,27 +23,20 @@ const Navbar = () => {
       },
     ],
   };
+
   return (
     <div className="flex items-center justify-between py-4">
       <Link to="/">
-        <img src={assets.logo} alt="" className="w-4xl sm:w-32 lg:w-40" />
+        <img src={assets.logo} alt="Logo" className="w-4xl sm:w-32 lg:w-40" />
       </Link>
 
       {user ? (
         <div className="flex items-center gap-2 sm:gap-5">
-          <ConfigProvider
-            button={{
-              className: styles.linearGradientButton,
-            }}
-          >
+          <ConfigProvider>
             <Space>
-              <Button
-                className="w-[200px] !flex !items-center !justify-center !rounded-full"
-                type="primary"
-                size="large"
-              >
+              <Button>
                 <MdStars className="text-white text-base z-50" />
-                Tín dụng còn lại : {credit}
+                Tín dụng còn lại: {credit}
               </Button>
             </Space>
           </ConfigProvider>
@@ -52,7 +45,7 @@ const Navbar = () => {
             placement="bottom"
             icon={<UserOutlined />}
           >
-            <p className="max-sm:hidden">Hi, {user.name}</p>
+            <p className="max-sm:hidden">Xin chào, {user.name}</p>
           </Dropdown.Button>
         </div>
       ) : (
@@ -61,24 +54,11 @@ const Navbar = () => {
             onClick={() => navigate("/buy")}
             className="cursor-pointer text-base"
           >
-            Pricing
+            Bảng giá
           </p>
-          <ConfigProvider
-            button={{
-              className: styles.linearGradientButton,
-            }}
-          >
-            <Space>
-              <Button
-                type="primary"
-                size="large"
-                onClick={() => setShowLogin(true)}
-                icon={<AntDesignOutlined />}
-              >
-                Đăng Nhập
-              </Button>
-            </Space>
-          </ConfigProvider>
+          <Button type="primary" onClick={() => setShowLogin(true)}>
+            Đăng nhập
+          </Button>
         </div>
       )}
     </div>

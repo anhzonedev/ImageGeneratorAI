@@ -49,7 +49,7 @@ const loginUser = async (req, res) => {
       });
     }
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.json({ success: false, message: "Đã xảy ra lỗi" });
   }
 };
 
@@ -75,45 +75,33 @@ const razorpayInstance = new Razorpay({
 const paymenRazorpay = async (req, res) => {
   try {
     const { userID, planID } = req.body;
-    const userData = await userModel.findById(userID);
-    if (!userID || !planID) {
-      return res.json({ success: false, message: "Thiếu thông tin" });
+
+    const plan = await planModel.findById(planID);
+    if (!plan || !plan.isActive) {
+      return res.json({ success: false, message: "Gói không hợp lệ hoặc không còn hoạt động" });
     }
 
-    let credits, plan, amount, date;
-    switch (planID) {
-      case "Cơ bản":
-        plan = "Cơ bản";
-        credits = 100;
-        amount = 10;
-        break;
-      case "Ưu tiên":
-        plan = "Ưu tiên";
-        credits = 500;
-        amount = 50;
-        break;
-      case "Cao cấp":
-        plan = "Cao cấp";
-        credits = 5000;
-        amount = 500;
-        break;
-      default:
-        return res.json({ success: false, message: "Chưa chọn gói dùng" });
+    const userData = await userModel.findById(userID);
+    if (!userData) {
+      return res.json({ success: false, message: "Người dùng không tồn tại" });
     }
-    date = Date.now();
+
+    // Convert VND to INR (approximately 1 INR = 300 VND)
+    const inrAmount = Math.round(plan.price / 300);
 
     const transactionData = {
       userID,
-      plan,
-      amount,
-      credits,
-      date,
+      plan: plan.name,
+      amount: plan.price, // Store original VND amount
+      amountINR: inrAmount, // Store INR amount
+      credits: plan.credits,
+      date: Date.now(),
     };
 
     const newTransaction = await transactionModel.create(transactionData);
     const options = {
-      amount: amount * 100, // Amount in paise
-      currency: "INR", // Explicitly set currency to INR
+      amount: inrAmount * 100, // Amount in paise (INR)
+      currency: "INR",
       receipt: newTransaction._id,
     };
 
@@ -121,7 +109,7 @@ const paymenRazorpay = async (req, res) => {
       if (error) {
         return res.json({ success: false, message: error });
       }
-      res.json({ success: true, order });
+      res.json({ success: true, order, originalAmount: plan.price });
     });
   } catch (error) {
     res.json({ success: false, message: error.message });
