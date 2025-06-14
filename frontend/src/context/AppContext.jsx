@@ -55,6 +55,7 @@ const AppContextProvider = (props) => {
     }
   }, [token]);
 
+
   const value = {
     user,
     setUser,

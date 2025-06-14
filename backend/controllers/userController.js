@@ -144,21 +144,10 @@ const verifyRazorpay = async (req, res) => {
 
 export const getActivePlans = async (req, res) => {
   try {
-    const plans = await planModel
-      .find({
-        isActive: true,
-        $or: [
-          { isPromotion: false },
-          {
-            isPromotion: true,
-            promotionEndDate: { $gt: new Date() },
-          },
-        ],
-      })
-      .sort({ price: 1 });
-
+    const plans = await planModel.find({ isActive: true }).sort({ price: 1 });
     res.json({ success: true, plans });
   } catch (error) {
+    console.error("Error fetching plans:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

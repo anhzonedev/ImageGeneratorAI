@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import "dotenv/config";
-import planModel from "./models/planModel.js";
+import planModel from "../models/planModel.js";
 
 const plans = [
   {
@@ -40,23 +40,54 @@ const plans = [
   },
 ];
 
+const validatePlans = (plans) => {
+  return plans.every((plan) => {
+    return (
+      plan.name &&
+      typeof plan.price === "number" &&
+      typeof plan.credits === "number" &&
+      plan.description &&
+      Array.isArray(plan.features) &&
+      plan.features.length > 0
+    );
+  });
+};
+
 const migratePlans = async () => {
   try {
+    if (!process.env.MONGODB_URI) {
+      throw new Error("MONGODB_URI is not defined in environment variables");
+    }
+
+    if (!validatePlans(plans)) {
+      throw new Error("Invalid plan data structure");
+    }
+
     // Connect to MongoDB
     await mongoose.connect(process.env.MONGODB_URI);
     console.log("Connected to MongoDB");
 
     // Clear existing plans
-    await planModel.deleteMany({});
-    console.log("Cleared existing plans");
+    const deleteResult = await planModel.deleteMany({});
+    console.log(`Cleared ${deleteResult.deletedCount} existing plans`);
 
     // Insert new plans
     const result = await planModel.insertMany(plans);
-    console.log("Inserted plans:", result);
+    console.log(`Successfully inserted ${result.length} plans:`);
+    result.forEach((plan) => {
+      console.log(
+        `- ${plan.name}: ${plan.credits} credits at ${plan.price} VND`
+      );
+    });
 
+    await mongoose.connection.close();
+    console.log("Database connection closed");
     process.exit(0);
   } catch (error) {
-    console.error("Migration failed:", error);
+    console.error("Migration failed:", error.message);
+    if (mongoose.connection.readyState === 1) {
+      await mongoose.connection.close();
+    }
     process.exit(1);
   }
 };
